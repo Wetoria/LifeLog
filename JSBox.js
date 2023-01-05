@@ -1,3 +1,28 @@
+const GUDING = '固定'
+const LANGFEI = '废'
+const typeMap = {
+  "V":"Wetoria",
+  
+  "通勤": GUDING,
+  "午休": GUDING,
+  "固": GUDING,
+  "睡觉": GUDING,
+
+  "❤️":"❤️",
+  "家":"家庭",
+  "友":"朋友",
+
+  "工作":"工作",
+  "事业":"事业",
+
+  "律":"自律",
+  "增":"学习",
+
+  "废": LANGFEI,
+  "玩": LANGFEI,
+  "摸鱼": LANGFEI,
+}
+
 function formatOneRecordStr(str) {
   str = str.replaceAll('\n', '@@@@');
   str = `[${str}]`
@@ -58,9 +83,9 @@ list.forEach((item, index) => {
     item.endTime = `${item.date} ${newEndTime}`
   }
 
-  let total = totalDurationMap[scheduleType] || 0;
-  total += item.duration;
-  totalDurationMap[scheduleType] = total;
+  // let total = totalDurationMap[scheduleType] || 0;
+  // total += item.duration;
+  // totalDurationMap[scheduleType] = total;
 })
 
 list
