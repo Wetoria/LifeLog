@@ -1,5 +1,3 @@
-let str = ''
-
 function formatOneRecordStr(str) {
   str = str.replaceAll('\n', '@@@@');
   str = `[${str}]`
