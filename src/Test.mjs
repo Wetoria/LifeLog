@@ -13,6 +13,8 @@ function formatOneRecordStr(str) {
   return record
 }
 
+formatOneRecordStr(recordStr).map(i => JSON.stringify(i)).join('\n')
+
 const basePath = '../data';
 const paths = fs.readdirSync(basePath);
 
@@ -29,4 +31,9 @@ paths.forEach((path) => {
 })
 
 console.log(strRecords);
+
+strRecords.forEach((item) => {
+  let record = formatOneRecordStr(item);
+  console.log(record);
+})
 // console.log(formatOneRecordStr(TestData));
