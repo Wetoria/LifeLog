@@ -1,11 +1,11 @@
 const { scheduleTypeMap } = require('./constants');
 const { calcAndFormatTimeDiff, formatDuration } = require('../utils/formatter');
 
-const getTotalData = (data = []) => {
+const getTotalData = (list = []) => {
   const totalDurationMap = {};
   const secondsOfDay = 24 * 60 * 60;
 
-  data.forEach((item) => {
+  list.forEach((item) => {
     let total = totalDurationMap[item.scheduleType] || 0;
     total += item.duration;
     totalDurationMap[item.scheduleType] = total;
@@ -37,11 +37,12 @@ const getTotalData = (data = []) => {
     let proportion = (duration / secondsOfDay * 100).toFixed(0);
     totalSchedule.content += `${prefix}${formatedDesc}, 占${proportion}%。\n`
   })
-  const first = data[0]
+  const first = list[0]
   const date = first.date;
   totalSchedule.startTime = `${date} 00:00`
   totalSchedule.endTime = `${date} 23:59`
-  return totalSchedule
+
+  list.push(totalSchedule);
 }
 
 const dealRecords = (list) => {
@@ -71,14 +72,43 @@ const dealRecords = (list) => {
     item.scheduleType = scheduleType;
     item.scheduleTitle = `${item.title} ${item.durationDesc}`
   })
-
-  const totalSchedule = getTotalData(list);
-  list.push(totalSchedule);
 }
 
-const getData = (data) => {
-  const temp = `[${data}]`
-  const list = JSON.parse(temp);
+
+const createReminder = (line) => {
+  const [contentWithIcon, time] = line.split('at');
+  const contents = contentWithIcon.split(' ');
+  contents.shift() // 去掉 ⏰ 图标
+  const [title, second, third] = contents;
+  const hasUrl = second.startsWith('http')
+  $reminder.create({
+    title: `${title}${hasUrl ? ` ${second}` : ''}`,
+    alarmDate: time ? new Date(time) : null,
+    notes: hasUrl ? third : second,
+  })
+}
+
+const dealEachRecordDetail = (records) => {
+  const map = {
+    '⏰': createReminder,
+  }
+  const keys = Object.keys(map);
+  records.forEach((record) => {
+    const {
+      content = '',
+    } = record;
+    const lines = content.split('\n')
+    lines.forEach((line) => {
+      const targetKey = keys.find(key => line.startsWith(key))
+      if (targetKey) {
+        const operator = map[targetKey]
+        operator(line);
+      }
+    })
+  })
+}
+
+const getData = (list) => {
   list.sort((a, b) => {
     const aCreateTime = new Date(a.endTime);
     const bCreateTime = new Date(b.endTime);
@@ -86,6 +116,9 @@ const getData = (data) => {
   })
 
   dealRecords(list);
+  getTotalData(list);
+  dealEachRecordDetail(list);
+
   return list
 }
 
