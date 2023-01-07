@@ -20,7 +20,13 @@ const formatDuration = (duration) => {
   return `${durationHours > 0 ? durationHours + '小时' : ''}${durationMinutesRemain}分钟`;
 }
 
+const formatZero = (value) => {
+  const temp = Number(value)
+  return isNaN(temp) ? 0 : temp;
+}
+
 module.exports = {
   calcAndFormatTimeDiff,
   formatDuration,
+  formatZero,
 }

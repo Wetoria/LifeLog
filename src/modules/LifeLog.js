@@ -1,5 +1,10 @@
 const { scheduleTypeMap } = require('./constants');
-const { calcAndFormatTimeDiff, formatDuration } = require('../utils/formatter');
+const {
+  calcAndFormatTimeDiff,
+  formatDuration,
+  formatZero,
+} = require('../utils/formatter');
+
 
 const getTotalData = (list = []) => {
   const totalDurationMap = {};
@@ -11,17 +16,18 @@ const getTotalData = (list = []) => {
     totalDurationMap[item.scheduleType] = total;
   })
 
-  const isGrowth = totalDurationMap['废']
+  const isGrowth = formatZero(totalDurationMap['废'])
     < (
-      totalDurationMap['学习']
-      + totalDurationMap['工作']
-      + totalDurationMap['事业']
-      + totalDurationMap['自律']
+      formatZero(totalDurationMap['学习'])
+      + formatZero(totalDurationMap['工作'])
+      + formatZero(totalDurationMap['事业'])
+      + formatZero(totalDurationMap['自律'])
     )
   const totalSchedule = {
     title: '统计',
     content: '',
     isAllDay: '是',
+    data: totalDurationMap,
     scheduleType: isGrowth ? '学习' : '废',
   }
   Object.keys(totalDurationMap).forEach((key) => {
