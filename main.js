@@ -8,6 +8,8 @@ const {
   params,
 } = dict;
 
+const test = require('./src/modules/TestJSBox')
+
 if (!cmd) {
   $intents.finish('请选择一个操作')
   return;
