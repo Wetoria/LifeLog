@@ -51,6 +51,37 @@ const getTotalData = (list = []) => {
   list.push(totalSchedule);
 }
 
+const handleTitle = (title) => {
+  let result = [];
+  
+  const containsBlank = /\s*/.test(title)
+  const containsColon = /：/.test(title)
+  const containsAt = /@/.test(title);
+
+  const replaceAt = (str) => {
+    return str.replace(/@.*/, '');
+  }
+  
+  // 获取 recordType
+  let temp = title;
+  temp = temp.replace(/：.*/, '');
+  temp = replaceAt(temp);
+  if (containsBlank) {
+    temp = temp.trim().split(/\s+/)[0]
+  }
+  result.push(temp);
+
+  // 获取做了什么事情
+  if (containsColon) {
+    temp = title;
+    temp = replaceAt(temp);
+    temp = temp.split('：')[1]
+    result.push(temp)
+  }
+
+  return result;
+}
+
 const dealRecords = (list) => {
   list.forEach((item, index) => {
     if (index == 0) {
@@ -72,7 +103,7 @@ const dealRecords = (list) => {
     item.duration = duration;
     item.durationDesc = durationDesc;
 
-    const recordType = item.title.split('：')[0];
+    const [recordType] = handleTitle(item.title);
     const scheduleType = scheduleTypeMap[recordType]
     item.recordType = recordType;
     item.scheduleType = scheduleType;
@@ -131,4 +162,5 @@ const getData = (list) => {
 module.exports = {
   getData,
   getTotalData,
+  handleTitle,
 }
